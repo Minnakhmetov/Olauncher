@@ -132,4 +132,9 @@
     <string name="adapter_hide">Hide</string>
     <string name="are_you_using_your_phone_or_is_your_phone_using_you">Are you using your phone, or is your phone using you?</string>
     <string name="about_olauncher">About Olauncher</string>
+    <string name="yes_with_timer">Yes(%1$d)</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="stay_focused">Stay Focused</string>
+    <string name="show_timer_when_openining_hidden">Show timer when openining hidden</string>
 </resources>

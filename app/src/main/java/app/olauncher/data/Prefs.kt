@@ -34,6 +34,7 @@ class Prefs(context: Context) {
     private val RATE_CLICKED = "RATE_CLICKED"
     private val SWIPE_DOWN_ACTION = "SWIPE_DOWN_ACTION"
     private val TEXT_SIZE_SCALE = "TEXT_SIZE_SCALE"
+    private val HIDDEN_APPS_TIMER = "HIDDEN_APPS_TIMER"
 
     private val APP_NAME_1 = "APP_NAME_1"
     private val APP_NAME_2 = "APP_NAME_2"
@@ -368,6 +369,10 @@ class Prefs(context: Context) {
     var calendarAppClassName: String?
         get() = prefs.getString(CALENDAR_APP_CLASS_NAME, "").toString()
         set(value) = prefs.edit().putString(CALENDAR_APP_CLASS_NAME, value).apply()
+
+    var hiddenAppsTimer: Boolean
+        get() = prefs.getBoolean(HIDDEN_APPS_TIMER, false)
+        set(value) = prefs.edit().putBoolean(HIDDEN_APPS_TIMER, value).apply()
 
     fun getAppName(location: Int): String {
         return when (location) {

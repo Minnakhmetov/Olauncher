@@ -63,6 +63,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         populateSwipeApps()
         populateSwipeDownAction()
         populateActionHints()
+        populateHiddenAppsTimer()
         initClickListeners()
         initObservers()
     }
@@ -103,6 +104,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.actionAccessibility -> openAccessibilityService()
             R.id.closeAccessibility -> toggleAccessibilityVisibility(false)
             R.id.notWorking -> requireContext().openUrl(Constants.URL_DOUBLE_TAP)
+            R.id.hiddenAppsTimer -> toggleHiddenAppsTimer()
 
             R.id.tvGestures -> binding.flSwipeDown.visibility = View.VISIBLE
 
@@ -202,6 +204,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.actionAccessibility.setOnClickListener(this)
         binding.closeAccessibility.setOnClickListener(this)
         binding.notWorking.setOnClickListener(this)
+        binding.hiddenAppsTimer.setOnClickListener(this)
 
         binding.share.setOnClickListener(this)
         binding.rate.setOnClickListener(this)
@@ -291,6 +294,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         }
     }
 
+    private fun toggleStayFocusedDialog() {
+        prefs.hiddenAppsTimer = !prefs.hiddenAppsTimer
+    }
+
     private fun toggleDateTime(selected: Int) {
         prefs.dateTimeVisibility = selected
         populateDateTime()
@@ -329,16 +336,27 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun showHiddenApps() {
-        if (prefs.hiddenApps.isEmpty()) {
-            requireContext().showToast(getString(R.string.no_hidden_apps))
-            return
-        }
         viewModel.getHiddenApps()
-        findNavController().navigate(
-            R.id.action_settingsFragment_to_appListFragment,
-            bundleOf(Constants.Key.FLAG to Constants.FLAG_HIDDEN_APPS)
-        )
+        if (prefs.hiddenAppsTimer) {
+            findNavController().navigate(R.id.action_settingsFragment_to_stayFocusedDialogFragment);
+        } else {
+            findNavController().navigate(
+                R.id.action_settingsFragment_to_appListFragment,
+                bundleOf(Constants.Key.FLAG to Constants.FLAG_HIDDEN_APPS)
+            )
+        }
     }
+
+//    private fun showHiddenApps() {
+//        if (prefs.hiddenApps.isEmpty()) {
+//            requireContext().showToast(getString(R.string.no_hidden_apps))
+//            return
+//        }
+//        findNavController().navigate(
+//            R.id.action_settingsFragment_to_appListFragment,
+//            bundleOf(Constants.Key.FLAG to Constants.FLAG_HIDDEN_APPS)
+//        )
+//    }
 
     private fun checkAdminPermission() {
         val isAdmin: Boolean = deviceManager.isAdminActive(componentName)
@@ -446,6 +464,11 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             prefs.autoShowKeyboard = !prefs.autoShowKeyboard
             populateKeyboardText()
         }
+    }
+
+    private fun toggleHiddenAppsTimer() {
+        prefs.hiddenAppsTimer = !prefs.hiddenAppsTimer
+        populateHiddenAppsTimer()
     }
 
     private fun updateTheme(appTheme: Int) {
@@ -584,6 +607,15 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         if (viewModel.isOlauncherDefault.value != true) return
         if (prefs.rateClicked.not() && prefs.toShowHintCounter > Constants.HINT_RATE_US && prefs.toShowHintCounter < Constants.HINT_RATE_US + 10)
             binding.rate.setCompoundDrawablesWithIntrinsicBounds(0, android.R.drawable.arrow_down_float, 0, 0)
+    }
+
+    private fun populateHiddenAppsTimer() {
+        binding.hiddenAppsTimer.text = getString(
+            if (prefs.hiddenAppsTimer)
+                R.string.yes
+            else
+                R.string.no
+        )
     }
 
     override fun onDestroyView() {
