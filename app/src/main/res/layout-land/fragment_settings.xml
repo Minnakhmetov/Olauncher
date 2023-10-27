@@ -882,7 +882,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="12dp"
-                    android:text="@string/stay_focused"
+                    android:text="@string/no_distraction"
                     android:textColor="?attr/primaryColor" />
 
                 <LinearLayout
@@ -900,7 +900,7 @@
                         android:layout_weight="1"
                         android:lines="1"
                         android:paddingVertical="8dp"
-                        android:text="@string/show_timer_when_openining_hidden"
+                        android:text="@string/delay_opening_hidden_apps"
                         android:textColor="?attr/primaryColor" />
 
 

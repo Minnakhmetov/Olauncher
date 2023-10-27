@@ -54,16 +54,12 @@
             app:popEnterAnim="@anim/fade_enter"
             app:popExitAnim="@anim/fade_exit" />
         <action
-            android:id="@+id/action_settingsFragment_to_stayFocusedDialogFragment"
-            app:destination="@id/stayFocusedDialogFragment" />
+            android:id="@+id/action_settingsFragment_to_timerDialogFragment"
+            app:destination="@id/timerDialogFragment" />
     </fragment>
     <dialog
-        android:id="@+id/stayFocusedDialogFragment"
-        android:name="app.olauncher.ui.BaseTimerDialogFragment"
-        android:label="StayFocusedDialogFragment" >
-        <action
-            android:id="@+id/action_stayFocusedDialogFragment_to_appListFragment"
-            app:destination="@id/appListFragment" />
-    </dialog>
+        android:id="@+id/timerDialogFragment"
+        android:name="app.olauncher.ui.TimerDialogFragment"
+        android:label="TimerDialogFragment" />
 
 </navigation>

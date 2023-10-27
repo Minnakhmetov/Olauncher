@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Olauncher</string>
+    <string name="app_name" translatable="false">Olauncher Fork</string>
     <string name="github" translatable="false">Github</string>
     <string name="lock_layout_description" translatable="false">lock layout description to be used a unique id to lock screen</string>
     <string name="olauncher_pro" translatable="false"><u>Olauncher Pro</u></string>
@@ -135,6 +135,7 @@
     <string name="yes_with_timer">Yes(%1$d)</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="stay_focused">Stay Focused</string>
-    <string name="show_timer_when_openining_hidden">Show timer when openining hidden</string>
+    <string name="no_distraction">No Distraction</string>
+    <string name="delay_opening_hidden_apps">Delay opening hidden apps</string>
+    <string name="you_have_hidden_these_for_a_reason">You have hidden these apps for a reason. Are you sure?</string>
 </resources>

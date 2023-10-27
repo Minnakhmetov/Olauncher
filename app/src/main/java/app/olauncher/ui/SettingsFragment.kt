@@ -4,15 +4,22 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.clearFragmentResultListener
+import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import app.olauncher.BuildConfig
@@ -24,7 +31,7 @@ import app.olauncher.databinding.FragmentSettingsBinding
 import app.olauncher.helper.*
 import app.olauncher.listener.DeviceAdmin
 
-class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener {
+class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener, OnSharedPreferenceChangeListener {
 
     private lateinit var prefs: Prefs
     private lateinit var viewModel: MainViewModel
@@ -33,6 +40,8 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+
+    private var timerDialogAction: (() -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
@@ -50,6 +59,30 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         deviceManager = context?.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         componentName = ComponentName(requireContext(), DeviceAdmin::class.java)
         checkAdminPermission()
+
+        val navBackStackEntry = findNavController().getBackStackEntry(R.id.settingsFragment)
+
+        val observer = LifecycleEventObserver { _, event ->
+            navBackStackEntry.savedStateHandle.run {
+                if (event == Lifecycle.Event.ON_RESUME
+                    && contains(TimerDialogFragment.RESULT_KEY)) {
+                    val result = get<Boolean>(TimerDialogFragment.RESULT_KEY) ?: false
+                    remove<Boolean>(TimerDialogFragment.RESULT_KEY)
+                    if (result) {
+                        timerDialogAction?.invoke()
+                        timerDialogAction = null
+                    }
+                }
+            }
+        }
+
+        navBackStackEntry.lifecycle.addObserver(observer)
+
+        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        })
 
         binding.homeAppsNum.text = prefs.homeAppsNum.toString()
         populateKeyboardText()
@@ -335,28 +368,39 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         }
     }
 
+    private fun showTimerDialog(yesAction: () -> Unit) {
+        timerDialogAction = yesAction
+        findNavController().navigate(R.id.action_settingsFragment_to_timerDialogFragment)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("ANIME_SettingsFragment", "onPause")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("ANIME_SettingsFragment", "onResume")
+    }
+
     private fun showHiddenApps() {
         viewModel.getHiddenApps()
-        if (prefs.hiddenAppsTimer) {
-            findNavController().navigate(R.id.action_settingsFragment_to_stayFocusedDialogFragment);
-        } else {
+        fun navigateToHiddenApps() {
+            if (prefs.hiddenApps.isEmpty()) {
+                requireContext().showToast(getString(R.string.no_hidden_apps))
+                return
+            }
             findNavController().navigate(
                 R.id.action_settingsFragment_to_appListFragment,
                 bundleOf(Constants.Key.FLAG to Constants.FLAG_HIDDEN_APPS)
             )
         }
+        if (prefs.hiddenAppsTimer) {
+            showTimerDialog { navigateToHiddenApps() }
+        } else {
+            navigateToHiddenApps()
+        }
     }
-
-//    private fun showHiddenApps() {
-//        if (prefs.hiddenApps.isEmpty()) {
-//            requireContext().showToast(getString(R.string.no_hidden_apps))
-//            return
-//        }
-//        findNavController().navigate(
-//            R.id.action_settingsFragment_to_appListFragment,
-//            bundleOf(Constants.Key.FLAG to Constants.FLAG_HIDDEN_APPS)
-//        )
-//    }
 
     private fun checkAdminPermission() {
         val isAdmin: Boolean = deviceManager.isAdminActive(componentName)
@@ -467,8 +511,15 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun toggleHiddenAppsTimer() {
-        prefs.hiddenAppsTimer = !prefs.hiddenAppsTimer
-        populateHiddenAppsTimer()
+        fun toggle() {
+            prefs.hiddenAppsTimer = !prefs.hiddenAppsTimer
+            populateHiddenAppsTimer()
+        }
+        if (prefs.hiddenAppsTimer) {
+            showTimerDialog { toggle() }
+        } else {
+            toggle()
+        }
     }
 
     private fun updateTheme(appTheme: Int) {
@@ -621,5 +672,9 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
+        
     }
 }

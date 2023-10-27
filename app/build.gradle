@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "app.olauncher"
+        applicationId "app.olauncher.fork"
         minSdkVersion 23
         targetSdkVersion 33
         versionCode 73
