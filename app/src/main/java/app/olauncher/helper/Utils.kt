@@ -83,18 +83,22 @@ suspend fun getAppsList(
             for (profile in userManager.userProfiles) {
                 for (app in launcherApps.getActivityList(null, profile)) {
 
-                    val appLabelShown = prefs.getAppRenameLabel(app.applicationInfo.packageName).ifBlank { app.label.toString() }
+                    val packageName = app.applicationInfo.packageName
+                    val appLabelShown = prefs.getAppRenameLabel(packageName).ifBlank { app.label.toString() }
+                    val appDelay = prefs.getAppDelay(packageName)
+
                     val appModel = AppModel(
                         appLabelShown,
                         collator.getCollationKey(app.label.toString()),
-                        app.applicationInfo.packageName,
+                        packageName,
                         app.componentName.className,
                         (System.currentTimeMillis() - app.firstInstallTime) < Constants.ONE_HOUR_IN_MILLIS,
-                        profile
+                        profile,
+                        appDelay,
                     )
 
                     // if the current app is not OLauncher
-                    if (app.applicationInfo.packageName != BuildConfig.APPLICATION_ID) {
+                    if (packageName != BuildConfig.APPLICATION_ID) {
                         // is this a hidden app?
                         if (hiddenApps.contains(app.applicationInfo.packageName + "|" + profile.toString())) {
                             if (includeHiddenApps) {

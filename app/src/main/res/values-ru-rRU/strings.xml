@@ -65,7 +65,7 @@
     <string name="accessibility_service_description">" Разрешение на доступ требуется, чтобы включить двойное касание для блокировки. Любые данные, полученные Olauncher через этот сервис, не покинут ваше устройство."</string>
     <string name="support_olauncher_for_free">Поддержите Olauncher бесплатно, используя нашу партнерскую ссылку Amazon.</string>
     <string name="support_olauncher_message">Каждый раз, когда вы покупаете что-то по нашей ссылке, мы получаем небольшую комиссию. Пожалуйста, сохраните ссылку и используйте ее при совершении покупок в Интернете.\nСпасибо!</string>
-    <string name="open">Открыть ссылку</string>
+    <string name="open_link">Открыть ссылку</string>
     <string name="copy">Копировать</string>
     <string name="close">Закрыть</string>
     <string name="not_now">Не сейчас</string>

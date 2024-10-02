@@ -31,6 +31,7 @@ class AppDrawerAdapter(
     private val appDeleteListener: (AppModel) -> Unit,
     private val appHideListener: (AppModel, Int) -> Unit,
     private val appRenameListener: (AppModel, String) -> Unit,
+    private val appChangeDelayListener: (AppModel) -> Unit,
 ) : ListAdapter<AppModel, AppDrawerAdapter.ViewHolder>(DIFF_CALLBACK), Filterable {
 
     companion object {
@@ -67,7 +68,8 @@ class AppDrawerAdapter(
                 appDeleteListener,
                 appInfoListener,
                 appHideListener,
-                appRenameListener
+                appRenameListener,
+                appChangeDelayListener,
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -130,7 +132,7 @@ class AppDrawerAdapter(
 
     fun setAppList(appsList: MutableList<AppModel>) {
         // Add empty app for bottom padding in recyclerview
-        appsList.add(AppModel("", null, "", "", false, android.os.Process.myUserHandle()))
+        appsList.add(AppModel("", null, "", "", false, android.os.Process.myUserHandle(), 0))
         this.appsList = appsList
         this.appFilteredList = appsList
         submitList(appsList)
@@ -153,16 +155,18 @@ class AppDrawerAdapter(
             appInfoListener: (AppModel) -> Unit,
             appHideListener: (AppModel, Int) -> Unit,
             appRenameListener: (AppModel, String) -> Unit,
+            appChangeDelayListener: (AppModel) -> Unit,
         ) =
             with(binding) {
                 appHideLayout.visibility = View.GONE
                 renameLayout.visibility = View.GONE
-                appTitle.visibility = View.VISIBLE
                 appTitle.text = appModel.appLabel + if (appModel.isNew == true) " ✨" else ""
                 appTitle.gravity = appLabelGravity
                 otherProfileIndicator.isVisible = appModel.user != myUserHandle
 
-                appTitle.setOnClickListener { clickListener(appModel) }
+                appTitle.setOnClickListener {
+                    clickListener(appModel)
+                }
                 appTitle.setOnLongClickListener {
                     if (appModel.appPackage.isNotEmpty()) {
                         appDelete.alpha = if (root.context.isSystemApp(appModel.appPackage)) 0.5f else 1.0f
@@ -254,6 +258,9 @@ class AppDrawerAdapter(
                     appTitle.visibility = View.VISIBLE
                 }
                 appHide.setOnClickListener { appHideListener(appModel, bindingAdapterPosition) }
+                appChangeDelay.setOnClickListener {
+                    appChangeDelayListener(appModel)
+                }
             }
 
         private fun getAppName(context: Context, appPackage: String): String {

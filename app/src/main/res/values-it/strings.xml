@@ -65,7 +65,7 @@
     <string name="accessibility_service_description">L\'autorizzazione di accessibilità è necessaria per abilitare il doppio tocco per il blocco schermo. Qualsiasi dato acquisito da Olauncher tramite questo servizio rimarrà all’interno del telefono</string>
     <string name="support_olauncher_for_free">Supporta Olauncher gratuitamente utilizzando il nostro link di affiliazione su Amazon.</string>
     <string name="support_olauncher_message">Ogni volta che acquisti qualcosa utilizzando il nostro link, riceviamo una piccola commissione. Salva il link e usalo ogni volta che fai acquisti online.\n Grazie!</string>
-    <string name="open">Link aperto</string>
+    <string name="open_link">Link aperto</string>
     <string name="copy">copia</string>
     <string name="close">chiudi</string>
     <string name="not_now">Non ora</string>

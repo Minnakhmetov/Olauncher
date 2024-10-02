@@ -42,15 +42,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val showDialog = SingleLiveEvent<String>()
     val checkForMessages = SingleLiveEvent<Unit?>()
     val resetLauncherLiveData = SingleLiveEvent<Unit?>()
+    val showOpenWithDelayDialog = SingleLiveEvent<Int>()
 
     fun selectedApp(appModel: AppModel, flag: Int) {
         when (flag) {
             Constants.FLAG_LAUNCH_APP -> {
-                launchApp(appModel.appPackage, appModel.activityClassName, appModel.user)
+                launchAppWithDelay(appModel.appPackage, appModel.activityClassName, appModel.user, appModel.delay)
             }
 
             Constants.FLAG_HIDDEN_APPS -> {
-                launchApp(appModel.appPackage, appModel.activityClassName, appModel.user)
+                launchAppWithDelay(appModel.appPackage, appModel.activityClassName, appModel.user, appModel.delay)
             }
 
             Constants.FLAG_SET_HOME_APP_1 -> {
@@ -161,6 +162,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun updateSwipeApps() {
         updateSwipeApps.postValue(Unit)
+    }
+
+    private fun launchAppWithDelay(packageName: String, activityClassName: String?, userHandle: UserHandle, delay: Int) {
+        if (delay > 0) {
+            showOpenWithDelayDialog.value = delay
+        } else {
+            launchApp(packageName, activityClassName, userHandle)
+        }
     }
 
     private fun launchApp(packageName: String, activityClassName: String?, userHandle: UserHandle) {

@@ -161,7 +161,10 @@ class AppDrawerFragment : Fragment() {
             appRenameListener = { appModel, renameLabel ->
                 prefs.setAppRenameLabel(appModel.appPackage, renameLabel)
                 viewModel.getAppList()
-            }
+            },
+            appChangeDelayListener = { appModel ->
+                findNavController().navigate(AppDrawerFragmentDirections.actionAppListFragmentToChangeAppDelayDialogFragment(appModel.delay))
+            },
         )
 
         linearLayoutManager = object : LinearLayoutManager(requireContext()) {
@@ -207,6 +210,10 @@ class AppDrawerFragment : Fragment() {
                     adapter.filter.filter(binding.search.query)
                 }
             }
+        }
+        viewModel.showOpenWithDelayDialog.observe(viewLifecycleOwner) {
+            findNavController().navigate(R.id.action_appListFragment_to_openAppWithDelayDialogFragment)
+//            findNavController().navigate(AppDrawerFragmentDirections.actionAppListFragmentToChangeAppDelayDialogFragment(it))
         }
     }
 

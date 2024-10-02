@@ -40,6 +40,12 @@
             app:popExitAnim="@anim/fade_exit"
             app:popUpTo="@+id/appListFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_appListFragment_to_changeAppDelayDialogFragment"
+            app:destination="@id/changeAppDelayDialogFragment" />
+        <action
+            android:id="@+id/action_appListFragment_to_openAppWithDelayDialogFragment"
+            app:destination="@id/openAppWithDelayDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -54,5 +60,17 @@
             app:popEnterAnim="@anim/fade_enter"
             app:popExitAnim="@anim/fade_exit" />
     </fragment>
+    <dialog
+        android:id="@+id/changeAppDelayDialogFragment"
+        android:name="app.olauncher.ui.ChangeAppDelayDialogFragment"
+        android:label="ChangeAppDelayDialogFragment" >
+        <argument
+            android:name="delay"
+            app:argType="integer" />
+    </dialog>
+    <dialog
+        android:id="@+id/openAppWithDelayDialogFragment"
+        android:name="app.olauncher.ui.OpenAppWithDelayDialogFragment"
+        android:label="OpenAppWithDelayDialogFragment" />
 
 </navigation>
