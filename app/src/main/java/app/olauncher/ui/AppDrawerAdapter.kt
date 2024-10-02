@@ -163,6 +163,7 @@ class AppDrawerAdapter(
                 appTitle.text = appModel.appLabel + if (appModel.isNew == true) " ✨" else ""
                 appTitle.gravity = appLabelGravity
                 otherProfileIndicator.isVisible = appModel.user != myUserHandle
+                appTitle.visibility = View.VISIBLE
 
                 appTitle.setOnClickListener {
                     clickListener(appModel)

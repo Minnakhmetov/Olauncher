@@ -58,6 +58,7 @@ class AppDrawerFragment : Fragment() {
             flag = it.getInt(Constants.Key.FLAG, Constants.FLAG_LAUNCH_APP)
             canRename = it.getBoolean(Constants.Key.RENAME, false)
         }
+
         initViews()
         initSearch()
         initAdapter()
@@ -112,10 +113,10 @@ class AppDrawerFragment : Fragment() {
                 if (it.appPackage.isEmpty())
                     return@AppDrawerAdapter
                 viewModel.selectedApp(it, flag)
-                if (flag == Constants.FLAG_LAUNCH_APP || flag == Constants.FLAG_HIDDEN_APPS)
-                    findNavController().popBackStack(R.id.mainFragment, false)
-                else
-                    findNavController().popBackStack()
+//                if (flag == Constants.FLAG_LAUNCH_APP || flag == Constants.FLAG_HIDDEN_APPS)
+//                    findNavController().popBackStack(R.id.mainFragment, false)
+//                else
+//                    findNavController().popBackStack()
             },
             appInfoListener = {
                 openAppInfo(
@@ -163,7 +164,7 @@ class AppDrawerFragment : Fragment() {
                 viewModel.getAppList()
             },
             appChangeDelayListener = { appModel ->
-                findNavController().navigate(AppDrawerFragmentDirections.actionAppListFragmentToChangeAppDelayDialogFragment(appModel.delay))
+                viewModel.openChangeAppDelayDialog(appModel)
             },
         )
 
@@ -212,9 +213,35 @@ class AppDrawerFragment : Fragment() {
             }
         }
         viewModel.showOpenWithDelayDialog.observe(viewLifecycleOwner) {
-            findNavController().navigate(R.id.action_appListFragment_to_openAppWithDelayDialogFragment)
-//            findNavController().navigate(AppDrawerFragmentDirections.actionAppListFragmentToChangeAppDelayDialogFragment(it))
+            if (findNavController().currentDestination?.id == R.id.appListFragment) {
+                findNavController().navigate(
+                    AppDrawerFragmentDirections.actionAppListFragmentToOpenAppWithDelayDialogFragment(
+                        it
+                    )
+                )
+            }
         }
+        viewModel.showChangeAppDelayDialog.observe(viewLifecycleOwner) {
+            if (findNavController().currentDestination?.id == R.id.appListFragment) {
+                findNavController().navigate(
+                    AppDrawerFragmentDirections.actionAppListFragmentToChangeAppDelayDialogFragment(
+                        it
+                    )
+                )
+            }
+        }
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Boolean>(OpenAppWithDelayDialogFragment.RESULT_KEY)?.observe(viewLifecycleOwner) {
+                if (it) {
+                    viewModel.launchDelayedApp()
+                }
+            }
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Int>(ChangeAppDelayDialogFragment.RESULT_KEY)?.observe(viewLifecycleOwner) {
+                if (it != ChangeAppDelayDialogFragment.RESULT_CANCELED) {
+                    viewModel.changeAppDelay(it)
+                }
+            }
     }
 
     private fun initClickListeners() {

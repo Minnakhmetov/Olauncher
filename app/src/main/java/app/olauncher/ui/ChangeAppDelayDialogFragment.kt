@@ -3,10 +3,10 @@ package app.olauncher.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import app.olauncher.R
 import app.olauncher.databinding.ChangeAppDelayDialogBinding
 import app.olauncher.helper.ButtonWithTimer
@@ -19,8 +19,10 @@ class ChangeAppDelayDialogFragment : DialogFragment() {
     }
 
     private var result = RESULT_CANCELED
-//    private lateinit var buttonWithTimer: ButtonWithTimer
+    private var buttonWithTimer: ButtonWithTimer? = null
     private lateinit var binding: ChangeAppDelayDialogBinding
+
+    private val args: ChangeAppDelayDialogFragmentArgs by navArgs()
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -30,6 +32,9 @@ class ChangeAppDelayDialogFragment : DialogFragment() {
         binding.secondsPicker.maxValue = 59
         binding.minutesPicker.minValue = 0
         binding.minutesPicker.maxValue = 59
+
+        binding.secondsPicker.value = args.delay % 60
+        binding.minutesPicker.value = args.delay / 60
 
         val dialog = activity?.let {
             // Use the Builder class for convenient dialog construction.
@@ -47,20 +52,27 @@ class ChangeAppDelayDialogFragment : DialogFragment() {
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
 
-//        buttonWithTimer = ButtonWithTimer(dialog.getButton(AlertDialog.BUTTON_POSITIVE), getString(R.string.apply), 10)
-//        buttonWithTimer.startTimer()
+        dialog.setOnShowListener {
+            val dialog = it as AlertDialog
+            buttonWithTimer = ButtonWithTimer(
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE),
+                getString(R.string.apply),
+                args.delay
+            )
+            buttonWithTimer?.startTimer()
+        }
 
         return dialog
     }
 
     override fun onPause() {
         super.onPause()
-//        buttonWithTimer.startTimer()
+        buttonWithTimer?.cancelTimer()
     }
 
     override fun onResume() {
         super.onResume()
-//        buttonWithTimer.cancelTimer()
+        buttonWithTimer?.startTimer()
     }
 
     override fun onDismiss(dialog: DialogInterface) {

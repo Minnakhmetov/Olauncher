@@ -71,6 +71,10 @@
     <dialog
         android:id="@+id/openAppWithDelayDialogFragment"
         android:name="app.olauncher.ui.OpenAppWithDelayDialogFragment"
-        android:label="OpenAppWithDelayDialogFragment" />
+        android:label="OpenAppWithDelayDialogFragment" >
+        <argument
+            android:name="delay"
+            app:argType="integer" />
+    </dialog>
 
 </navigation>
