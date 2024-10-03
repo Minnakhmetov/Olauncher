@@ -40,7 +40,7 @@ class ChangeAppDelayDialogFragment : DialogFragment() {
             // Use the Builder class for convenient dialog construction.
             val builder = AlertDialog.Builder(it)
             builder.setView(binding.changeAppDelayDialog)
-            builder.setTitle("Change delay")
+            builder.setTitle(it.getString(R.string.change_app_delay_dialog_title))
             builder
                 .setPositiveButton(R.string.apply) { _, _ ->
                     result = binding.minutesPicker.value * 60 + binding.secondsPicker.value

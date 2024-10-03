@@ -3,7 +3,6 @@ package app.olauncher.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Looper
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
@@ -27,7 +26,9 @@ class OpenAppWithDelayDialogFragment : DialogFragment() {
         val dialog = activity?.let {
             // Use the Builder class for convenient dialog construction.
             val builder = AlertDialog.Builder(it)
-            builder.setMessage(it.getString(R.string.app_delay_message))
+            builder
+                .setMessage(it.getString(R.string.open_with_delay_dialog_message))
+                .setTitle(it.getString(R.string.open_with_delay_dialog_title))
                 .setPositiveButton(R.string.open) { _, _ -> result = true }
                 .setNegativeButton(R.string.close) { _, _ -> result = false }
             // Create the AlertDialog object and return it.

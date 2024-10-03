@@ -181,10 +181,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         updateSwipeApps.postValue(Unit)
     }
 
+    private fun showOpenWithDelayDialog(appModel: AppModel) {
+        appBeingDelayed = appModel
+        showOpenWithDelayDialog.value = appModel.delay
+    }
+
     private fun launchAppWithDelay(appModel: AppModel) {
         if (appModel.delay > 0) {
-            appBeingDelayed = appModel
-            showOpenWithDelayDialog.value = appModel.delay
+            showOpenWithDelayDialog(appModel)
         } else {
             launchApp(appModel)
         }
