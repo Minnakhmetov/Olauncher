@@ -87,6 +87,9 @@ class Prefs(context: Context) {
     private val CALENDAR_APP_USER = "CALENDAR_APP_USER"
     private val CALENDAR_APP_CLASS_NAME = "CALENDAR_APP_CLASS_NAME"
 
+    private val APP_RENAME_LABEL_PREFIX = "APP_RENAME_LABEL_"
+    private val APP_DELAY_PREFIX = "APP_DELAY_"
+
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, 0);
 
     var firstOpen: Boolean
@@ -204,6 +207,7 @@ class Prefs(context: Context) {
     var swipeDownAction: Int
         get() = prefs.getInt(SWIPE_DOWN_ACTION, Constants.SwipeDownAction.NOTIFICATIONS)
         set(value) = prefs.edit().putInt(SWIPE_DOWN_ACTION, value).apply()
+
 
     var appName1: String
         get() = prefs.getString(APP_NAME_1, "").toString()
@@ -445,7 +449,27 @@ class Prefs(context: Context) {
         }
     }
 
-    fun getAppRenameLabel(appPackage: String): String = prefs.getString(appPackage, "").toString()
+    private fun getAppRenameLableKey(appPackage: String): String {
+        return APP_RENAME_LABEL_PREFIX + appPackage
+    }
 
-    fun setAppRenameLabel(appPackage: String, renameLabel: String) = prefs.edit().putString(appPackage, renameLabel).apply()
+    private fun getAppDelayKey(appPackage: String): String {
+        return APP_DELAY_PREFIX + appPackage
+    }
+
+    fun getAppRenameLabel(appPackage: String): String {
+        return prefs.getString(getAppRenameLableKey(appPackage), "").toString()
+    }
+
+    fun setAppRenameLabel(appPackage: String, renameLabel: String) {
+        prefs.edit().putString(getAppRenameLableKey(appPackage), renameLabel).apply()
+    }
+
+    fun getAppDelay(appPackage: String): Int {
+        return prefs.getInt(getAppDelayKey(appPackage), 0)
+    }
+
+    fun setAppDelay(appPackage: String, delay: Int) {
+        return prefs.edit().putInt(getAppDelayKey(appPackage), delay).apply()
+    }
 }

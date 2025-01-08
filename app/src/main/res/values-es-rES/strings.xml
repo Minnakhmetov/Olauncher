@@ -65,7 +65,7 @@
     <string name="accessibility_service_description">"Se requiere el permiso de accesibilidad para habilitar el doble toque para bloquear. Cualquier dato adquirido por Olauncher a través de este servicio no saldrá de su dispositivo."</string>
     <string name="support_olauncher_for_free">Apoya a Olauncher de forma gratuita utilizando nuestro enlace de afiliado de Amazon.</string>
     <string name="support_olauncher_message">Cada vez que compre algo usando nuestro enlace, obtendremos una pequeña comisión. Guarde el enlace y utilícelo cada vez que compre en línea.\n¡Gracias!</string>
-    <string name="open">Abrir enlace</string>
+    <string name="open_link">Abrir enlace</string>
     <string name="copy">Copiar</string>
     <string name="close">Cerrar</string>
     <string name="not_now">Ahora no</string>

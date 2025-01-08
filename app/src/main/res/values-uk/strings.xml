@@ -65,7 +65,7 @@
     <string name="accessibility_service_description">" Дозвіл на доступ потрібний, щоб увімкнути подвійне торкання для блокування. Будь-які дані, отримані Olauncher через цей сервіс, не залишать ваш пристрій."</string>
     <string name="support_olauncher_for_free">Підтримайте Olauncher безкоштовно, використовуючи наше партнерське посилання Amazon.</string>
     <string name="support_olauncher_message">Щоразу, коли ви купуєте щось за нашим посиланням, ми отримуємо невелику комісію. Будь ласка, збережіть посилання та використовуйте його для здійснення покупок в Інтернеті.\nСпасибі!</string>
-    <string name="open">Відкрити посилання</string>
+    <string name="open_link">Відкрити посилання</string>
     <string name="copy">Копіювати</string>
     <string name="close">Закрити</string>
     <string name="not_now">Не зараз</string>

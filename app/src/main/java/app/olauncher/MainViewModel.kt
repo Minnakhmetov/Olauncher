@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
-import android.os.UserHandle
+import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -29,6 +29,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val appContext by lazy { application.applicationContext }
     private val prefs = Prefs(appContext)
 
+    private var appWhoseDelayIsBeingChanged: AppModel? = null
+    private var appBeingDelayed: AppModel? = null
+
     val firstOpen = MutableLiveData<Boolean>()
     val refreshHome = MutableLiveData<Boolean>()
     val toggleDateTime = MutableLiveData<Unit>()
@@ -42,15 +45,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val showDialog = SingleLiveEvent<String>()
     val checkForMessages = SingleLiveEvent<Unit?>()
     val resetLauncherLiveData = SingleLiveEvent<Unit?>()
+    val showOpenWithDelayDialog = SingleLiveEvent<Int>()
+    val showChangeAppDelayDialog = SingleLiveEvent<Int>()
 
     fun selectedApp(appModel: AppModel, flag: Int) {
         when (flag) {
             Constants.FLAG_LAUNCH_APP -> {
-                launchApp(appModel.appPackage, appModel.activityClassName, appModel.user)
+                launchAppWithDelay(appModel)
             }
 
             Constants.FLAG_HIDDEN_APPS -> {
-                launchApp(appModel.appPackage, appModel.activityClassName, appModel.user)
+                launchAppWithDelay(appModel)
             }
 
             Constants.FLAG_SET_HOME_APP_1 -> {
@@ -147,6 +152,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun openChangeAppDelayDialog(appModel: AppModel) {
+        appWhoseDelayIsBeingChanged = appModel
+        showChangeAppDelayDialog.value = appModel.delay
+    }
+
+    fun changeAppDelay(newDelay: Int) {
+        appWhoseDelayIsBeingChanged?.let {
+            appWhoseDelayIsBeingChanged = null
+            prefs.setAppDelay(it.appPackage, newDelay)
+            getAppList()
+        }
+    }
+
     fun firstOpen(value: Boolean) {
         firstOpen.postValue(value)
     }
@@ -163,7 +181,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         updateSwipeApps.postValue(Unit)
     }
 
-    private fun launchApp(packageName: String, activityClassName: String?, userHandle: UserHandle) {
+    private fun showOpenWithDelayDialog(appModel: AppModel) {
+        appBeingDelayed = appModel
+        showOpenWithDelayDialog.value = appModel.delay
+    }
+
+    private fun launchAppWithDelay(appModel: AppModel) {
+        if (appModel.delay > 0) {
+            showOpenWithDelayDialog(appModel)
+        } else {
+            launchApp(appModel)
+        }
+    }
+
+    private fun launchApp(appModel: AppModel) {
+        val packageName = appModel.appPackage
+        val userHandle = appModel.user
+        val activityClassName = appModel.activityClassName
+
         val launcher = appContext.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         val activityInfo = launcher.getActivityList(packageName, userHandle)
 
@@ -192,6 +227,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         } catch (e: Exception) {
             appContext.showToast(appContext.getString(R.string.unable_to_open_app))
+        }
+    }
+
+    fun launchDelayedApp() {
+        appBeingDelayed?.let {
+            launchApp(it)
         }
     }
 

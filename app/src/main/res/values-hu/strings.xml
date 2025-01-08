@@ -67,7 +67,7 @@
     <string name="support_olauncher_for_free">Támogasson minket ingyenesen az Amazon affiliate linkünk használatával.</string>
     <string name="support_olauncher_message">Minden alkalommal, amikor vásárol valamit a linkünket használva, egy kis jutalékot kapunk. Kérjük, mentse el a linket, és használja fel, amikor csak online vásárol.
             \n\nKöszönjük!</string>
-    <string name="open">Link megnyitása</string>
+    <string name="open_link">Link megnyitása</string>
     <string name="copy">Másolás</string>
     <string name="close">Bezárás</string>
     <string name="not_now">Később</string>

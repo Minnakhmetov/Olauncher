@@ -96,7 +96,7 @@
     <string name="accessibility_service_description">Uprawnienia dostępu są wymagane, aby włączyć podwójne dotknięcie, aby zablokować. Wszelkie dane pozyskane przez Olauncher za pośrednictwem tej usługi nie opuszczą Twojego urządzenia.</string>
     <string name="support_olauncher_for_free">Wesprzyj Olauncher za darmo, korzystając z naszego linku afiliacyjnego Amazon.</string>
     <string name="support_olauncher_message">Za każdym razem, gdy kupujesz coś za pomocą naszego linku, otrzymujemy niewielką prowizję. Zapisz link i używaj go podczas zakupów online. Dziękuję!</string>
-    <string name="open">Otwórz łącze</string>
+    <string name="open_link">Otwórz łącze</string>
     <string name="copy">Kopiuj</string>
     <string name="close">Zamknij</string>
     <string name="not_now">Nie teraz</string>

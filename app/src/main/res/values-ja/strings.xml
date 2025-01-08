@@ -97,7 +97,7 @@
     <string name="accessibility_service_description">ダブルタップしてロックを有効にするには、アクセシビリティ許可が必要です。このサービスを通じて Olauncher が取得したデータは、デバイスから流出することはありません。</string>
     <string name="support_olauncher_for_free">Amazon アフィリエイト リンクを使用して、Olauncher を無料でサポートしてください。</string>
     <string name="support_olauncher_message">あなたが私たちのリンクを使用して何かを購入するたびに、私たちは少額の手数料を受け取ります。リンクを保存し、オンライン ショッピングの際には必ずご利用ください。 ありがとう！</string>
-    <string name="open">リンクを開く</string>
+    <string name="open_link">リンクを開く</string>
     <string name="copy">コピー</string>
     <string name="close">閉じる</string>
     <string name="not_now">今はやめろ</string>

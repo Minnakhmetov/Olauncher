@@ -65,7 +65,7 @@
     <string name="accessibility_service_description">Tillgänglighetsbehörigheten krävs för att aktivera dubbeltryck för att låsa. Eventuella data förvärvade av Olauncher genom denna tjänst kommer inte att lämna din enhet.</string>
     <string name="support_olauncher_for_free">Stöd Olauncher utan kostnad genom att använda vår Amazon-affiliatelänk.</string>
     <string name="support_olauncher_message">Varje gång du köper något via vår länk får vi en liten provision. Vänligen spara länken och använd den när du handlar på nätet.\nTack!</string>
-    <string name="open">Öppna länk</string>
+    <string name="open_link">Öppna länk</string>
     <string name="copy">Kopiera</string>
     <string name="close">Stäng</string>
     <string name="not_now">Inte nu</string>

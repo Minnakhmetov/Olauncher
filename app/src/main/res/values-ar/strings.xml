@@ -96,7 +96,7 @@
     <string name="accessibility_service_description">إذن الوصول مطلوب لتمكين النقر المزدوج للقفل. أي بيانات حصل عليها Olauncher عبر هذه الخدمة لن تترك جهازك.</string>
     <string name="support_olauncher_for_free">ادعم Olauncher مجانًا باستخدام رابط الشراكة التابع لشركة Amazon.</string>
     <string name="support_olauncher_message">في كل مرة تشتري شيئًا باستخدام الرابط الخاص بنا ، نحصل على عمولة صغيرة. يرجى حفظ الرابط واستخدامه في أي وقت تتسوق فيه عبر الإنترنت. شكرًا لك!</string>
-    <string name="open">افتح الرابط</string>
+    <string name="open_link">افتح الرابط</string>
     <string name="copy">ينسخ</string>
     <string name="close">يغلق</string>
     <string name="not_now">ليس الآن</string>
