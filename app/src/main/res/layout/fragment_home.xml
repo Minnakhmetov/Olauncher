@@ -57,7 +57,8 @@
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         android:paddingTop="112dp"
-        android:paddingBottom="48dp">
+        android:paddingBottom="48dp"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+id/homeApp1"
@@ -148,6 +149,12 @@
             tools:visibility="visible" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/widgetContainer"
+        android:layout_width="300dp"
+        android:layout_height="380dp"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/firstRunTips"

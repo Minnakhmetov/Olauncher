@@ -20,9 +20,8 @@
         android:id="@+id/dateTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="48dp"
-        android:gravity="center_horizontal"
+        android:layout_gravity="center"
+        android:layout_marginEnd="200dp"
         android:orientation="vertical"
         android:visibility="gone"
         tools:visibility="visible">
@@ -57,7 +56,8 @@
         android:layout_marginHorizontal="74dp"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingVertical="@dimen/home_app_padding_vertical">
+        android:paddingVertical="@dimen/home_app_padding_vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/homeApp1"
@@ -148,6 +148,13 @@
             tools:visibility="visible" />
 
     </LinearLayout>
+
+    <android.appwidget.AppWidgetHostView
+        android:id="@+id/widgetContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="323dp"
+        android:layout_marginStart="150dp"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/firstRunTips"

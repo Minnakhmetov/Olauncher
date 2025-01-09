@@ -90,6 +90,8 @@ class Prefs(context: Context) {
     private val APP_RENAME_LABEL_PREFIX = "APP_RENAME_LABEL_"
     private val APP_DELAY_PREFIX = "APP_DELAY_"
 
+    private val HOME_SCREEN_WIDGET_ID = "HOME_SCREEN_WIDGET_ID"
+
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, 0);
 
     var firstOpen: Boolean
@@ -392,6 +394,16 @@ class Prefs(context: Context) {
     var calendarAppClassName: String?
         get() = prefs.getString(CALENDAR_APP_CLASS_NAME, "").toString()
         set(value) = prefs.edit().putString(CALENDAR_APP_CLASS_NAME, value).apply()
+
+    var homeScreenWidgetId: Int?
+        get() {
+            val id = prefs.getInt(HOME_SCREEN_WIDGET_ID, -1)
+            return if (id == -1) null else id
+        }
+        set(value) {
+            prefs.edit().putInt(HOME_SCREEN_WIDGET_ID, value ?: -1).apply()
+        }
+
 
     fun getAppName(location: Int): String {
         return when (location) {

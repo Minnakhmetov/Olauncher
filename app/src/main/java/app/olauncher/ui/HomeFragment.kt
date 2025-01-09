@@ -1,18 +1,33 @@
 package app.olauncher.ui
 
+import android.Manifest
+import android.app.Activity
 import android.app.admin.DevicePolicyManager
+import android.appwidget.AppWidgetHost
+import android.appwidget.AppWidgetHostView
+import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -42,6 +57,50 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+//class MyWidgetHostView(context: Context?): AppWidgetHostView(context) {
+//    private val LONG_CLICK_THRESHOLD: Long = 1000
+//    var start: Long = 0
+//
+//    private var onLongClickListener: OnLongClickListener? = null
+//
+//    override fun setOnLongClickListener(l: OnLongClickListener?) {
+//        onLongClickListener = l
+//    }
+//
+//    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+//        return when (ev?.actionMasked) {
+//            MotionEvent.ACTION_DOWN -> {
+//                start = System.currentTimeMillis()
+//                false
+//            }
+//            MotionEvent.ACTION_UP -> {
+//                val isLongClick = System.currentTimeMillis() - start > LONG_CLICK_THRESHOLD
+//                if (isLongClick) {
+//                    onLongClickListener?.onLongClick(this)
+//                }
+//                isLongClick
+//            } else -> {
+//                false
+//            }
+//        }
+//    }
+//
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        onLongClickListener?.onLongClick(this)
+//        return true
+//    }
+//}
+//
+//class MyWidgetHost(context: Context?, hostId: Int): AppWidgetHost(context, hostId) {
+//    override fun onCreateView(
+//        context: Context?,
+//        appWidgetId: Int,
+//        appWidget: AppWidgetProviderInfo?
+//    ): AppWidgetHostView {
+//        return MyWidgetHostView(context)
+//    }
+//}
+
 class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener {
 
     private lateinit var prefs: Prefs
@@ -52,9 +111,19 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var appWidgetManager: AppWidgetManager
+    private lateinit var appWidgetHost: AppWidgetHost
+
+    private lateinit var widgetBindingLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        appWidgetHost.startListening()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,6 +140,43 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         setHomeAlignment(prefs.homeAlignment)
         initSwipeTouchListener()
         initClickListeners()
+
+        appWidgetManager = AppWidgetManager.getInstance(this.context)
+        appWidgetHost = AppWidgetHost(this.context, 1)
+
+        prefs.homeScreenWidgetId?.let { id ->
+            showWidget(id)
+        }
+
+        widgetBindingLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                if (data?.hasExtra(AppWidgetManager.EXTRA_APPWIDGET_ID) == true) {
+                    val appWidgetId = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                    if (appWidgetId != -1) {
+                        prefs.homeScreenWidgetId?.let { deleteWidget(it) }
+                        showWidget(appWidgetId)
+                        prefs.homeScreenWidgetId = appWidgetId
+                    }
+                }
+            }
+        }
+
+        bindDigitalWellbeingWidget()
+    }
+
+    private fun deleteWidget(appWidgetId: Int) {
+        appWidgetHost.deleteAppWidgetId(appWidgetId)
+        (binding.widgetContainer as ViewGroup).removeAllViews()
+    }
+
+    private fun showWidget(appWidgetId: Int) {
+        val appWidgetProviderInfo = appWidgetManager.getAppWidgetInfo(appWidgetId)
+        val appWidgetHostView = appWidgetHost.createView(this.context, appWidgetId, appWidgetProviderInfo)
+        val container = (binding.widgetContainer as ViewGroup)
+        container.removeAllViews()
+        container.addView(appWidgetHostView)
+
     }
 
     override fun onResume() {
@@ -79,6 +185,11 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         viewModel.isOlauncherDefault()
         if (prefs.showStatusBar) showStatusBar()
         else hideStatusBar()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appWidgetHost.stopListening()
     }
 
     override fun onClick(view: View) {
@@ -120,6 +231,18 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 prefs.calendarAppClassName,
                 prefs.calendarAppUser
             )
+    }
+
+    private fun bindDigitalWellbeingWidget() {
+        val widgetProviderName = ComponentName("com.google.android.apps.wellbeing", "com.google.android.apps.wellbeing.widget.screentime.ScreenTimeWidgetProviderReceiver_Receiver")
+        val appWidgetId = appWidgetHost.allocateAppWidgetId()
+        if (!appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, widgetProviderName)) {
+            val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, widgetProviderName)
+            }
+            widgetBindingLauncher.launch(intent)
+        }
     }
 
     override fun onLongClick(view: View): Boolean {
@@ -199,6 +322,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.clock.setOnLongClickListener(this)
         binding.date.setOnLongClickListener(this)
         binding.setDefaultLauncher.setOnClickListener(this)
+        binding.widgetContainer.setOnClickListener(this)
     }
 
     private fun setHomeAlignment(horizontalGravity: Int = prefs.homeAlignment) {
